@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>music163逆向</title>
-    <url>/posts/fd4614f0/</url>
-    <content><![CDATA[<details>
-<summary>Code</summary>
-<pre><code class="language-python">
-from Crypto.Cipher import AES
-from base64 import b64encode
-from Crypto.Util.Padding import pad
-import random
-import json
-import requests
-
-<p>headers &#x3D; &#123;<br>            ‘Accept’: ‘<em>&#x2F;</em>‘,<br>            ‘Accept-Encoding’: ‘gzip,deflate,sdch’,<br>            ‘Accept-Language’: ‘zh-CN,zh;q&#x3D;0.8,gl;q&#x3D;0.6,zh-TW;q&#x3D;0.4’,<br>            ‘Connection’: ‘keep-alive’,<br>            ‘Content-Type’: ‘application&#x2F;x-www-form-urlencoded’,<br>            ‘Host’: ‘music.163.com’,<br>            ‘Referer’: ‘<a href="https://music.163.com/">https://music.163.com/</a>‘,<br>            ‘User-Agent’: ‘Mozilla&#x2F;5.0 (Windows NT 10.0; WOW64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;63.0.3239.132 Safari&#x2F;537.36’<br>        &#125;</p>
-<p>def gen_ran_string(num&#x3D;16):<br>    “””<br>    生成随机密钥<br>    :param num: &#x3D;16<br>    :return: 16位随机字符串<br>    “””<br>    chars &#x3D; ‘abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789’<br>    result &#x3D; “”<br>    b_len &#x3D; len(chars)<br>    for _ in range(num):<br>        index &#x3D; int(random.random() * b_len)<br>        result +&#x3D; chars[index]<br>    return result</p>
-<p>def aes(a, b):<br>    key &#x3D; b.encode(‘utf-8’)<br>    iv &#x3D; b’0102030405060708’<br>    cipher &#x3D; AES.new(key, AES.MODE_CBC, iv)<br>    padded_data &#x3D; pad(a.encode(‘utf-8’), AES.block_size, style&#x3D;’pkcs7’)<br>    ciphertext &#x3D; cipher.encrypt(padded_data)<br>    return b64encode(ciphertext).decode(‘utf-8’)</p>
-<p>class RSAKeyPair:<br>    def <strong>init</strong>(self, e_hex, d_hex, m_hex):<br>        self.e &#x3D; int(e_hex, 16)<br>        self.m &#x3D; int(m_hex, 16)<br>        # 计算 chunk_size：根据模数字节长度确定<br>        byte_length &#x3D; (self.m.bit_length() + 7) &#x2F;&#x2F; 8<br>        self.chunk_size &#x3D; byte_length - 2  # 等效于原JS的 2 * biHighIndex(m)<br>        self.radix &#x3D; 16</p>
-<p>def encrypted_string(rsa_key, s):<br>    # 将字符串编码为Latin-1字节数组<br>    byte_data &#x3D; s.encode(‘latin-1’)<br>    # 填充0直到长度为chunk_size的倍数<br>    padding &#x3D; (-len(byte_data)) % rsa_key.chunk_size<br>    byte_data +&#x3D; bytes(padding)</p>
-<pre><code>encrypted_blocks = []
-hex_length = (rsa_key.m.bit_length() + 3) // 4  # 模数的十六进制长度
-
-for i in range(0, len(byte_data), rsa_key.chunk_size):
-    chunk = byte_data[i:i + rsa_key.chunk_size]
-    # 转换为小端整数
-    chunk_int = int.from_bytes(chunk, byteorder=&#39;little&#39;)
-    # RSA加密：计算 (chunk^e) mod m
-    encrypted_int = pow(chunk_int, rsa_key.e, rsa_key.m)
-    # 转换为固定长度的十六进制字符串
-    encrypted_hex = format(encrypted_int, &#39;0&#123;&#125;x&#39;.format(hex_length))
-    encrypted_blocks.append(encrypted_hex)
-
-return &#39; &#39;.join(encrypted_blocks)
-</code></pre>
-<p>def rsa(a, e_hex, m_hex):<br>    rsa_key &#x3D; RSAKeyPair(e_hex, “”, m_hex)<br>    return encrypted_string(rsa_key, a)</p>
-<p>def post_request(url,params):<br>    session &#x3D; requests.Session()<br>    res&#x3D;session.post(url&#x3D;url,headers&#x3D;headers,data&#x3D;params)<br>    return res.json()</p>
-<p>def encrypt_data(id):<br>    ramdom_string &#x3D; gen_ran_string()<br>    params &#x3D; {<br>        ‘ids’: [id],<br>        ‘csrf_token’: ‘’,<br>        ‘encodeType’: ‘aac’,<br>        ‘level’: ‘standard’<br>    }<br>    e &#x3D; ‘010001’<br>    f &#x3D; ‘00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7’<br>    g &#x3D; ‘0CoJUm6Qyw8W8jud’<br>    encText &#x3D; aes(json.dumps(params), g)<br>    encText &#x3D; aes(encText, ramdom_string)<br>    encSecKey &#x3D; rsa(ramdom_string, e, f)<br>    data &#x3D; {<br>        ‘params’: encText,<br>        ‘encSecKey’: encSecKey<br>    }<br>    return data<br>def get_song_by_songId(id):<br>    data&#x3D;encrypt_data(id)<br>    res&#x3D;post_request(‘<a href="https://music.163.com/weapi/song/enhance/player/url/v1',data">https://music.163.com/weapi/song/enhance/player/url/v1&#39;,data</a>)<br>    print(res)</p>
-<p>if <strong>name</strong> &#x3D;&#x3D; ‘<strong>main</strong>‘:<br>    id&#x3D;’8729797481’ #音乐id<br>    get_song_by_songId(id)<br></code></pre></p>
-</details>]]></content>
-  </entry>
-  <entry>
     <title>Hello World</title>
     <url>/posts/4a17b156/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -155,5 +116,44 @@ return &#39; &#39;.join(encrypted_blocks)
         <tag>逆向</tag>
         <tag>AST</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>music163逆向</title>
+    <url>/posts/fd4614f0/</url>
+    <content><![CDATA[<details>
+<summary>Code</summary>
+<pre><code class="language-python">
+from Crypto.Cipher import AES
+from base64 import b64encode
+from Crypto.Util.Padding import pad
+import random
+import json
+import requests
+
+<p>headers &#x3D; &#123;<br>            ‘Accept’: ‘<em>&#x2F;</em>‘,<br>            ‘Accept-Encoding’: ‘gzip,deflate,sdch’,<br>            ‘Accept-Language’: ‘zh-CN,zh;q&#x3D;0.8,gl;q&#x3D;0.6,zh-TW;q&#x3D;0.4’,<br>            ‘Connection’: ‘keep-alive’,<br>            ‘Content-Type’: ‘application&#x2F;x-www-form-urlencoded’,<br>            ‘Host’: ‘music.163.com’,<br>            ‘Referer’: ‘<a href="https://music.163.com/">https://music.163.com/</a>‘,<br>            ‘User-Agent’: ‘Mozilla&#x2F;5.0 (Windows NT 10.0; WOW64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;63.0.3239.132 Safari&#x2F;537.36’<br>        &#125;</p>
+<p>def gen_ran_string(num&#x3D;16):<br>    “””<br>    生成随机密钥<br>    :param num: &#x3D;16<br>    :return: 16位随机字符串<br>    “””<br>    chars &#x3D; ‘abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789’<br>    result &#x3D; “”<br>    b_len &#x3D; len(chars)<br>    for _ in range(num):<br>        index &#x3D; int(random.random() * b_len)<br>        result +&#x3D; chars[index]<br>    return result</p>
+<p>def aes(a, b):<br>    key &#x3D; b.encode(‘utf-8’)<br>    iv &#x3D; b’0102030405060708’<br>    cipher &#x3D; AES.new(key, AES.MODE_CBC, iv)<br>    padded_data &#x3D; pad(a.encode(‘utf-8’), AES.block_size, style&#x3D;’pkcs7’)<br>    ciphertext &#x3D; cipher.encrypt(padded_data)<br>    return b64encode(ciphertext).decode(‘utf-8’)</p>
+<p>class RSAKeyPair:<br>    def <strong>init</strong>(self, e_hex, d_hex, m_hex):<br>        self.e &#x3D; int(e_hex, 16)<br>        self.m &#x3D; int(m_hex, 16)<br>        # 计算 chunk_size：根据模数字节长度确定<br>        byte_length &#x3D; (self.m.bit_length() + 7) &#x2F;&#x2F; 8<br>        self.chunk_size &#x3D; byte_length - 2  # 等效于原JS的 2 * biHighIndex(m)<br>        self.radix &#x3D; 16</p>
+<p>def encrypted_string(rsa_key, s):<br>    # 将字符串编码为Latin-1字节数组<br>    byte_data &#x3D; s.encode(‘latin-1’)<br>    # 填充0直到长度为chunk_size的倍数<br>    padding &#x3D; (-len(byte_data)) % rsa_key.chunk_size<br>    byte_data +&#x3D; bytes(padding)</p>
+<pre><code>encrypted_blocks = []
+hex_length = (rsa_key.m.bit_length() + 3) // 4  # 模数的十六进制长度
+
+for i in range(0, len(byte_data), rsa_key.chunk_size):
+    chunk = byte_data[i:i + rsa_key.chunk_size]
+    # 转换为小端整数
+    chunk_int = int.from_bytes(chunk, byteorder=&#39;little&#39;)
+    # RSA加密：计算 (chunk^e) mod m
+    encrypted_int = pow(chunk_int, rsa_key.e, rsa_key.m)
+    # 转换为固定长度的十六进制字符串
+    encrypted_hex = format(encrypted_int, &#39;0&#123;&#125;x&#39;.format(hex_length))
+    encrypted_blocks.append(encrypted_hex)
+
+return &#39; &#39;.join(encrypted_blocks)
+</code></pre>
+<p>def rsa(a, e_hex, m_hex):<br>    rsa_key &#x3D; RSAKeyPair(e_hex, “”, m_hex)<br>    return encrypted_string(rsa_key, a)</p>
+<p>def post_request(url,params):<br>    session &#x3D; requests.Session()<br>    res&#x3D;session.post(url&#x3D;url,headers&#x3D;headers,data&#x3D;params)<br>    return res.json()</p>
+<p>def encrypt_data(id):<br>    ramdom_string &#x3D; gen_ran_string()<br>    params &#x3D; {<br>        ‘ids’: [id],<br>        ‘csrf_token’: ‘’,<br>        ‘encodeType’: ‘aac’,<br>        ‘level’: ‘standard’<br>    }<br>    e &#x3D; ‘010001’<br>    f &#x3D; ‘00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7’<br>    g &#x3D; ‘0CoJUm6Qyw8W8jud’<br>    encText &#x3D; aes(json.dumps(params), g)<br>    encText &#x3D; aes(encText, ramdom_string)<br>    encSecKey &#x3D; rsa(ramdom_string, e, f)<br>    data &#x3D; {<br>        ‘params’: encText,<br>        ‘encSecKey’: encSecKey<br>    }<br>    return data<br>def get_song_by_songId(id):<br>    data&#x3D;encrypt_data(id)<br>    res&#x3D;post_request(‘<a href="https://music.163.com/weapi/song/enhance/player/url/v1',data">https://music.163.com/weapi/song/enhance/player/url/v1&#39;,data</a>)<br>    print(res)</p>
+<p>if <strong>name</strong> &#x3D;&#x3D; ‘<strong>main</strong>‘:<br>    id&#x3D;’8729797481’ #音乐id<br>    get_song_by_songId(id)<br></code></pre></p>
+</details>]]></content>
   </entry>
 </search>
