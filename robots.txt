@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://qmike.top/sitemap.xml
+Sitemap: https://www.guanq.top/sitemap.xml
+Sitemap: https://www.guanq.top/baidu_sitemap.xml
