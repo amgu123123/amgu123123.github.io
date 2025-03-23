@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://amgu123123.github.io/posts/c4ecc1d1/</loc>
+    
+    <lastmod>2025-03-23</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://amgu123123.github.io/posts/456142f0/</loc>
+    
+    <lastmod>2025-03-23</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://amgu123123.github.io/posts/f391c99a/</loc>
+    
+    <lastmod>2025-03-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://amgu123123.github.io/posts/fd4614f0/</loc>
     
     <lastmod>2025-03-21</lastmod>
@@ -40,7 +67,7 @@
 
   <url>
     <loc>https://amgu123123.github.io/</loc>
-    <lastmod>2025-03-21</lastmod>
+    <lastmod>2025-03-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -48,28 +75,28 @@
   
   <url>
     <loc>https://amgu123123.github.io/tags/js/</loc>
-    <lastmod>2025-03-21</lastmod>
+    <lastmod>2025-03-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://amgu123123.github.io/tags/Babel/</loc>
-    <lastmod>2025-03-21</lastmod>
+    <lastmod>2025-03-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://amgu123123.github.io/tags/%E9%80%86%E5%90%91/</loc>
-    <lastmod>2025-03-21</lastmod>
+    <lastmod>2025-03-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://amgu123123.github.io/tags/AST/</loc>
-    <lastmod>2025-03-21</lastmod>
+    <lastmod>2025-03-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
