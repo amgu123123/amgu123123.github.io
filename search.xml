@@ -277,8 +277,125 @@ traceback: 调用栈信息
 ]]></content>
   </entry>
   <entry>
-    <title>数据分析第一步：手把手掌握Pandas数据结构基础</title>
-    <url>/posts/f8533093/</url>
+    <title>数据清洗三部曲：缺失值填充、重复值剔除与类型转换实战指南</title>
+    <url>/posts/1332d3e0/</url>
     <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>Pandas核心入门：彻底理解Series与DataFrame</title>
+    <url>/posts/f8533093/</url>
+    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>在Python数据分析领域，Pandas库是当之无愧的瑞士军刀。其核心数据结构<strong>Series</strong>和<strong>DataFrame</strong>承载了90%以上的数据处理场景。本文将深入剖析这两个数据结构的特性和用法，帮助你真正掌握它们的核心逻辑。</p>
+<hr>
+<h2 id="一、Series：带标签的一维数组"><a href="#一、Series：带标签的一维数组" class="headerlink" title="一、Series：带标签的一维数组"></a>一、Series：带标签的一维数组</h2><h3 id="1-1-什么是Series？"><a href="#1-1-什么是Series？" class="headerlink" title="1.1 什么是Series？"></a>1.1 什么是Series？</h3><p>Series是Pandas中最基础的<strong>带标签的一维数组</strong>，可以看作Excel中的单列数据，但功能更加强大。</p>
+<p><strong>核心特征：</strong></p>
+<ul>
+<li>包含一组数据（任何NumPy数据类型）</li>
+<li>包含一组索引（默认从0开始的自增索引）</li>
+<li>数据与索引自动对齐</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#从列表中创建</span></span><br><span class="line">prices=pd.Series([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>], index=[<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>, <span class="string">&#x27;E&#x27;</span>, <span class="string">&#x27;1&#x27;</span>,<span class="string">&#x27;1&#x27;</span>,<span class="string">&#x27;1&#x27;</span>,<span class="string">&#x27;1&#x27;</span>],name=<span class="string">&#x27;PRICES&#x27;</span>)</span><br><span class="line"><span class="comment">#从字典创建</span></span><br><span class="line">volumes=pd.Series(&#123;<span class="string">&#x27;KYU&#x27;</span>:<span class="number">2.1E6</span>,<span class="string">&#x27;CGN&#x27;</span>:<span class="number">1.8E6</span>,<span class="string">&#x27;ASDF&#x27;</span>:<span class="number">3.2E6</span>&#125;,name=<span class="string">&#x27;VULUMES&#x27;</span>)</span><br><span class="line"><span class="comment">#从Numpy数组中创建</span></span><br><span class="line">values=pd.Series(np.random.randn(<span class="number">5</span>),index=pd.date_range(<span class="string">&#x27;20250101&#x27;</span>,periods=<span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+<h3 id="1-2-关键操作"><a href="#1-2-关键操作" class="headerlink" title="1.2 关键操作"></a>1.2 关键操作</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(prices[<span class="string">&#x27;A&#x27;</span>])</span><br><span class="line"><span class="comment">#输出===&gt;</span></span><br><span class="line"><span class="comment"># 1</span></span><br><span class="line"><span class="built_in">print</span>(prices[<span class="string">&#x27;1&#x27;</span>])</span><br><span class="line"><span class="comment">#输出===&gt;</span></span><br><span class="line"><span class="comment"># 1    6</span></span><br><span class="line"><span class="comment"># 1    7</span></span><br><span class="line"><span class="comment"># 1    8</span></span><br><span class="line"><span class="comment"># 1    9</span></span><br><span class="line"><span class="comment"># 向量化运算</span></span><br><span class="line"><span class="built_in">print</span>(prices * <span class="number">2</span>)   <span class="comment"># 所有元素乘以2</span></span><br><span class="line"><span class="comment">#输出===&gt;</span></span><br><span class="line"><span class="comment"># A     2</span></span><br><span class="line"><span class="comment"># B     4</span></span><br><span class="line"><span class="comment"># C     6</span></span><br><span class="line"><span class="comment"># D     8</span></span><br><span class="line"><span class="comment"># E    10</span></span><br><span class="line"><span class="comment"># 1    12</span></span><br><span class="line"><span class="comment"># 1    14</span></span><br><span class="line"><span class="comment"># 1    16</span></span><br><span class="line"><span class="comment"># 1    18</span></span><br><span class="line"><span class="comment"># 条件过滤</span></span><br><span class="line"><span class="built_in">print</span>(prices[prices &gt; <span class="number">7</span>])  <span class="comment"># 筛选值大于7的元素</span></span><br><span class="line"><span class="comment">#输出===&gt;</span></span><br><span class="line"><span class="comment"># 1    8</span></span><br><span class="line"><span class="comment"># 1    9</span></span><br><span class="line"><span class="comment"># 方法调用</span></span><br><span class="line"><span class="built_in">print</span>(prices.value_counts())  <span class="comment"># 值计数统计</span></span><br><span class="line"><span class="comment">#输出===&gt;</span></span><br><span class="line"><span class="comment"># 1    1</span></span><br><span class="line"><span class="comment"># 2    1</span></span><br><span class="line"><span class="comment"># 3    1</span></span><br><span class="line"><span class="comment"># 4    1</span></span><br><span class="line"><span class="comment"># 5    1</span></span><br><span class="line"><span class="comment"># 6    1</span></span><br><span class="line"><span class="comment"># 7    1</span></span><br><span class="line"><span class="comment"># 8    1</span></span><br><span class="line"><span class="comment"># 9    1</span></span><br><span class="line"><span class="built_in">print</span>(s.value_counts())  <span class="comment"># 值计数统计</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-3-Series的属性和方法速查表"><a href="#1-3-Series的属性和方法速查表" class="headerlink" title="1.3 Series的属性和方法速查表"></a>1.3 Series的属性和方法速查表</h3><table>
+<thead>
+<tr>
+<th>属性&#x2F;方法</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>s.values</code></td>
+<td>获取数据（返回NumPy数组）</td>
+<td><code>prices.values</code> → <code>array([[1 2 3 4 5 6 7 8 9]])</code></td>
+</tr>
+<tr>
+<td><code>s.index</code></td>
+<td>获取索引</td>
+<td><code>prices.index</code> → <code>Index([&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;1&#39;, &#39;1&#39;, &#39;1&#39;, &#39;1&#39;])</code></td>
+</tr>
+<tr>
+<td><code>s.dtype</code></td>
+<td>查看数据类型</td>
+<td><code>prices.dtype</code> → <code>int64</code></td>
+</tr>
+<tr>
+<td><code>s.name</code></td>
+<td>Series的名称</td>
+<td><code>prices.name</code> → <code>&#39;PRICES&#39;</code></td>
+</tr>
+<tr>
+<td><code>s.head(n)</code></td>
+<td>查看前n行（默认5行）</td>
+<td><code>prices.head(2)</code> → 输出前2行数据</td>
+</tr>
+<tr>
+<td><code>s.unique()</code></td>
+<td>返回唯一值数组</td>
+<td><code>prices.unique()</code> → <code>array([[1 2 3 4 5 6 7 8 9]])</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="代码示例说明"><a href="#代码示例说明" class="headerlink" title="代码示例说明"></a><strong>代码示例说明</strong></h3><h2 id="二、DataFrame：二维数据表的核心"><a href="#二、DataFrame：二维数据表的核心" class="headerlink" title="二、DataFrame：二维数据表的核心"></a>二、DataFrame：二维数据表的核心</h2><h3 id="2-1-DataFrame的本质"><a href="#2-1-DataFrame的本质" class="headerlink" title="2.1 DataFrame的本质"></a>2.1 DataFrame的本质</h3><p>DataFrame是一个二维标签化数据结构，可以理解为多个Series的集合，类似于：</p>
+<p>Excel电子表格<br>SQL数据库表<br>R语言中的data.frame</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 从字典创建</span></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&#x27;Product&#x27;</span>: [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;Price&#x27;</span>: [<span class="number">99</span>, <span class="number">200</span>, <span class="number">150</span>],</span><br><span class="line">    <span class="string">&#x27;Sales&#x27;</span>: [<span class="number">1200</span>, <span class="number">800</span>, <span class="number">1500</span>]</span><br><span class="line">&#125;</span><br><span class="line">df = pd.DataFrame(data, index=[<span class="string">&#x27;Q1&#x27;</span>, <span class="string">&#x27;Q2&#x27;</span>, <span class="string">&#x27;Q3&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-索引操作"><a href="#2-2-索引操作" class="headerlink" title="2.2 索引操作"></a>2.2 索引操作</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># loc vs iloc 演示</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">索引示例：</span></span><br><span class="line"><span class="string">   Product  Price  Sales</span></span><br><span class="line"><span class="string">Q1       A     99   1200</span></span><br><span class="line"><span class="string">Q2       B    200    800</span></span><br><span class="line"><span class="string">Q3       C    150   1500</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 标签索引 (loc)</span></span><br><span class="line"><span class="built_in">print</span>(df.loc[<span class="string">&#x27;Q2&#x27;</span>, <span class="string">&#x27;Price&#x27;</span>])          <span class="comment"># 200</span></span><br><span class="line"><span class="built_in">print</span>(df.loc[<span class="string">&#x27;Q2&#x27;</span>:, <span class="string">&#x27;Price&#x27;</span>:<span class="string">&#x27;Sales&#x27;</span>])  <span class="comment"># 切片包含结束点</span></span><br><span class="line"><span class="comment"># 输出===&gt;</span></span><br><span class="line"><span class="comment">#     Price  Sales</span></span><br><span class="line"><span class="comment"># Q2    200    800</span></span><br><span class="line"><span class="comment"># Q3    150   1500</span></span><br><span class="line"><span class="comment"># 位置索引 (iloc)</span></span><br><span class="line"><span class="built_in">print</span>(df.iloc[<span class="number">0</span>, <span class="number">1</span>])                   <span class="comment"># 99</span></span><br><span class="line"><span class="built_in">print</span>(df.iloc[<span class="number">1</span>:<span class="number">3</span>, [<span class="number">0</span>,<span class="number">2</span>]])              <span class="comment"># 位置切片不包含结束点</span></span><br><span class="line"><span class="comment"># 输出===&gt;</span></span><br><span class="line"><span class="comment">#    Product  Sales</span></span><br><span class="line"><span class="comment"># Q2       B    800</span></span><br><span class="line"><span class="comment"># Q3       C   1500</span></span><br><span class="line"><span class="comment"># 条件过滤</span></span><br><span class="line">tech_stocks = df[df[<span class="string">&#x27;Sales&#x27;</span>] &gt; <span class="number">1000</span>]</span><br><span class="line"><span class="comment"># 输出===&gt;</span></span><br><span class="line"><span class="comment">#    Product  Price  Sales</span></span><br><span class="line"><span class="comment"># Q1       A     99   1200</span></span><br><span class="line"><span class="comment"># Q3       C    150   1500</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-数据查看"><a href="#2-3-数据查看" class="headerlink" title="2.3 数据查看"></a>2.3 数据查看</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">df.head(<span class="number">2</span>)       <span class="comment"># 查看前两行</span></span><br><span class="line">df.describe()    <span class="comment"># 统计摘要</span></span><br><span class="line">df.info()        <span class="comment"># 数据类型概览</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-4-列操作"><a href="#2-4-列操作" class="headerlink" title="2.4 列操作"></a>2.4 列操作</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 新增列</span></span><br><span class="line">df[<span class="string">&#x27;Revenue&#x27;</span>] = df[<span class="string">&#x27;Price&#x27;</span>] * df[<span class="string">&#x27;Sales&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除列</span></span><br><span class="line">df = df.drop(columns=[<span class="string">&#x27;Sales&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 类型转换</span></span><br><span class="line">df[<span class="string">&#x27;Price&#x27;</span>] = df[<span class="string">&#x27;Price&#x27;</span>].astype(<span class="string">&#x27;float32&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="三、实战"><a href="#三、实战" class="headerlink" title="三、实战"></a>三、实战</h1><h3 id="3-1-案例"><a href="#3-1-案例" class="headerlink" title="3.1 案例"></a>3.1 案例</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建多层索引Series</span></span><br><span class="line"><span class="comment"># 数据集生成</span></span><br><span class="line">dates = pd.date_range(<span class="string">&#x27;2025-03-25&#x27;</span>, periods=<span class="number">5</span>)</span><br><span class="line">stock_data = pd.DataFrame(&#123;</span><br><span class="line">    <span class="string">&#x27;Open&#x27;</span>: np.random.uniform(<span class="number">100</span>, <span class="number">200</span>, <span class="number">5</span>),</span><br><span class="line">    <span class="string">&#x27;Close&#x27;</span>: np.random.uniform(<span class="number">105</span>, <span class="number">210</span>, <span class="number">5</span>),</span><br><span class="line">    <span class="string">&#x27;Volume&#x27;</span>: np.random.randint(<span class="number">1e6</span>, <span class="number">5e6</span>, <span class="number">5</span>)</span><br><span class="line">&#125;, index=dates)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务要求：</span></span><br><span class="line"><span class="comment"># 1. 添加20日均线列（假设数据足够，这里用滚动平均）</span></span><br><span class="line"><span class="comment"># 2. 找出收盘价高于开盘价的天数</span></span><br><span class="line"><span class="comment"># 3. 筛选出交易量前3大的交易日</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-2-ans"><a href="#3-2-ans" class="headerlink" title="3.2 ans"></a>3.2 ans</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 任务1：添加20日均线列（使用滚动窗口）</span></span><br><span class="line">stock_data[<span class="string">&#x27;Close_mean_20&#x27;</span>] = stock_data[<span class="string">&#x27;Close&#x27;</span>].rolling(window=<span class="number">20</span>, min_periods=<span class="number">1</span>).mean()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务2：找出收盘价高于开盘价的天数</span></span><br><span class="line">close_higher_mask = stock_data[<span class="string">&#x27;Close&#x27;</span>] &gt; stock_data[<span class="string">&#x27;Open&#x27;</span>]</span><br><span class="line">close_higher_days = close_higher_mask.<span class="built_in">sum</span>()  <span class="comment"># 统计True的数量</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务3：筛选交易量前3大的交易日</span></span><br><span class="line">top3_volume = stock_data.nlargest(<span class="number">3</span>, <span class="string">&#x27;Volume&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打印结果</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;任务1：添加20日均线后的数据表&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(stock_data)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n任务2：收盘价高于开盘价的天数：&quot;</span>, close_higher_days)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n任务3：交易量前3的交易日&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(top3_volume)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h2 id="四、Series-vs-DataFrame：关键差异"><a href="#四、Series-vs-DataFrame：关键差异" class="headerlink" title="四、Series vs DataFrame：关键差异"></a>四、Series vs DataFrame：关键差异</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Series</th>
+<th>DataFrame</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>维度</td>
+<td>一维</td>
+<td>二维</td>
+</tr>
+<tr>
+<td>索引</td>
+<td>单索引</td>
+<td>行列双索引</td>
+</tr>
+<tr>
+<td>数据存储</td>
+<td>单列数据</td>
+<td>多列异构数据</td>
+</tr>
+<tr>
+<td>创建方式</td>
+<td>列表&#x2F;字典&#x2F;标量</td>
+<td>字典&#x2F;二维数组&#x2F;CSV</td>
+</tr>
+<tr>
+<td>数据访问</td>
+<td><code>s[key]</code></td>
+<td><code>df[col][row]</code></td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>单变量分析</td>
+<td>多变量关系分析</td>
+</tr>
+</tbody></table>
+]]></content>
+      <tags>
+        <tag>Pandas</tag>
+        <tag>Python</tag>
+      </tags>
   </entry>
 </search>

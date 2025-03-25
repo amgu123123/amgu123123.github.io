@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://amgu123123.github.io/posts/1332d3e0/</loc>
+    
+    <lastmod>2025-03-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://amgu123123.github.io/posts/f8533093/</loc>
     
     <lastmod>2025-03-25</lastmod>
@@ -123,6 +132,20 @@
   
   <url>
     <loc>https://amgu123123.github.io/tags/AST/</loc>
+    <lastmod>2025-03-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://amgu123123.github.io/tags/Pandas/</loc>
+    <lastmod>2025-03-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://amgu123123.github.io/tags/Python/</loc>
     <lastmod>2025-03-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
